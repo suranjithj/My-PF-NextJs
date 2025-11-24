@@ -55,7 +55,7 @@ export default function Projects() {
         {loading ? (
           <div className="text-center text-gray-400">Loading projects...</div>
         ) : projects.length === 0 ? (
-          <div className="text-center text-gray-400">No projects added yet. Add some from the dashboard!</div>
+          <div className="text-center text-gray-400">No projects to show. Coming Soon!</div>
         ) : (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

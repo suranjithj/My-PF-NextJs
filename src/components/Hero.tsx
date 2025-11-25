@@ -127,13 +127,13 @@ export default function Hero() {
       <div className="relative z-10 max-w-6xl mx-auto text-center animate-fade-in min-h-screen content-center sm:px-6 lg:px-8 md:py-10">
         <div className="md:flex-row xl:mx-40 lg:mx-30 md:mx-20 sm:mx-10 xs:mx-10">
           <h2 
-          className="text-6xl md:text-4xl mt-24 font-bold bg-clip-text text-gray-200 animate-slide-up"
+          className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl mt-24 font-bold bg-clip-text text-gray-200 animate-slide-up"
           >
             Hi, I&apos;m 
           </h2>
 
           <h1 
-          className="text-6xl md:text-7xl font-bold bg-clip-text text-transparent bg-linear-to-r from-purple-400 via-pink-500 to-red-500 animate-slide-up"
+          className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-linear-to-r from-purple-400 via-pink-500 to-red-500 animate-slide-up px-4"
           >
             SURANJITH JAYAWARDHANA
           </h1>

@@ -134,7 +134,7 @@ export default function Navbar() {
             onClose={() => setIsMobileMenuOpen(false)}
             className="bg-gray-900/95 backdrop-blur-lg border-t border-white/10"
           >
-            <div className="flex flex-col gap-2 py-4">
+            <div className="flex flex-col w-full gap-2 py-4">
               {navItems.map((item, idx) => (
                 <a
                   key={`mobile-link-${idx}`}

@@ -84,7 +84,7 @@ export default function Projects() {
                         ))}
                       </div>
 
-                      <p className="text-sm text-gray-300 mb-3">{project.description}</p>
+                      <p className="text-sm text-justify text-gray-300 mb-3">{project.description}</p>
 
                       <div className="flex items-center gap-3">
                         {project.githubUrl && (

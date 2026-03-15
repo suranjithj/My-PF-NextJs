@@ -2,249 +2,271 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
-import HoverGlowCard from "@/src/components/ui/HoverGlowCard"
 import Link from "next/link"
+import Image from "next/image"
 import SignOutButton from "../dashboard/signout-button"
+
+const navLinks = [
+  { label: "Overview",        href: "/admin/dashboard" },
+  { label: "Projects",        href: "/admin/projects" },
+  { label: "Services",        href: "/admin/services" },
+  { label: "Case Studies",    href: "/admin/case-studies" },
+  { label: "Contacts",        href: "/admin/contacts" },
+  { label: "Settings",        href: "/admin/settings" },
+]
 
 export default async function AdminDashboardPage() {
   const session = await getServerSession(authOptions)
-
-  if (!session) {
-    return redirect("/admin/login")
-  }
+  if (!session) return redirect("/admin/login")
 
   const user = session.user
 
-  const [usersCount, projectsCount, skillsCount, servicesCount, contactsCount] =
-    await Promise.all([
-      prisma.user.count(),
-      prisma.project.count(),
-      prisma.skill.count(),
-      prisma.service.count(),
-      prisma.contact.count()
-    ])
+  const [projectsCount, servicesCount, contactsCount] = await Promise.all([
+    prisma.project.count(),
+    prisma.service.count(),
+    prisma.contact.count(),
+  ])
 
-  const stats = {
-    users: usersCount,
-    projects: projectsCount,
-    skills: skillsCount,
-    services: servicesCount,
-    contacts: contactsCount
-  }
+  const stats = [
+    {
+      label: "Projects",
+      value: projectsCount,
+      href: "/admin/projects",
+      action: "Manage",
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+        </svg>
+      ),
+    },
+    {
+      label: "Services",
+      value: servicesCount,
+      href: "/admin/services",
+      action: "Manage",
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+        </svg>
+      ),
+    },
+    {
+      label: "Contacts",
+      value: contactsCount,
+      href: "/admin/contacts",
+      action: "View",
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+        </svg>
+      ),
+    },
+    {
+      label: "Case Studies",
+      value: "—",
+      href: "/admin/case-studies",
+      action: "Manage",
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+      ),
+    },
+  ]
+
+  const quickActions = [
+    { label: "New Project",    href: "/admin/projects/new",     primary: true },
+    { label: "New Service",    href: "/admin/services/new",     primary: false },
+    { label: "New Case Study", href: "/admin/case-studies/new", primary: false },
+    { label: "View Contacts",  href: "/admin/contacts",         primary: false },
+  ]
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-lg xs:text-xl sm:text-2xl font-semibold leading-tight">
-            Dashboard
-          </h1>
-          <p className="mt-1 text-sm xs:text-sm text-slate-600 dark:text-slate-300 truncate">
-            Welcome back, <span className="font-medium">{user?.name ?? user?.email}</span>
-          </p>
+    <div className="min-h-screen" style={{ backgroundColor: "#001436" }}>
+
+      {/* ── Header ── */}
+      <header
+        className="flex items-center justify-between px-6 py-4 border-b"
+        style={{
+          backgroundColor: "rgba(0,20,54,0.95)",
+          borderColor: "rgba(37,99,235,0.15)",
+          backdropFilter: "blur(12px)",
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
+        }}
+      >
+        {/* Logo + title */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="relative w-8 h-8">
+              <Image src="/DevLynxLogo.png" alt="DevLynx" fill className="object-contain" />
+            </div>
+            <span className="font-bold text-lg" style={{ color: "#f1f5f9" }}>
+              Dev<span style={{ color: "#2563eb" }}>Lynx</span>
+            </span>
+          </div>
+          <div
+            className="hidden sm:block w-px h-6"
+            style={{ backgroundColor: "rgba(37,99,235,0.2)" }}
+          />
+          <div className="hidden sm:block">
+            <p className="text-sm font-semibold" style={{ color: "#f1f5f9" }}>Admin Dashboard</p>
+            <p className="text-xs" style={{ color: "#dfe8f1" }}>
+              Welcome back, {user?.name ?? user?.email}
+            </p>
+          </div>
         </div>
 
+        {/* Right: user info + actions */}
         <div className="flex items-center gap-3">
-          <div className="hidden xs:flex xs:flex-col text-right text-sm text-slate-600 dark:text-slate-300">
-            <span className="font-medium truncate max-w-40">{user?.name ?? "—"}</span>
-            <span className="text-xs truncate max-w-40">{user?.email}</span>
-            <span className="text-xs italic mt-1">Role: {user?.role ?? "user"}</span>
-          </div>
-
-          <div className="flex xs:hidden items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-slate-300 text-sm font-medium text-slate-800 dark:text-slate-900 shadow">
-            {user?.name ? user.name.split(" ").map((s) => s[0]).slice(0,2).join("") : "U"}
+          <div className="hidden md:flex flex-col text-right">
+            <span className="text-sm font-medium" style={{ color: "#cbd5e1" }}>{user?.name ?? "—"}</span>
+            <span className="text-xs" style={{ color: "#dfe8f1" }}>{user?.email}</span>
           </div>
 
           <Link
             href="/"
-            className="px-3 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+            className="px-3 py-2 rounded-lg text-sm font-medium border transition-all duration-200 hover:scale-105"
+            style={{
+              backgroundColor: "rgba(37,99,235,0.1)",
+              borderColor: "rgba(37,99,235,0.3)",
+              color: "#60a5fa",
+            }}
           >
-            Go to Home
+            View Site
           </Link>
-          
+
           <SignOutButton />
         </div>
       </header>
 
-      <div className="mx-auto px-4 xs:px-3 sm:px-6 lg:px-8 mt-8">
-        <nav
-          className="mb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
-          aria-label="Admin quick navigation"
-        >
-          <div className="overflow-x-auto no-scrollbar">
-            <ul className="grid grid-flow-col auto-cols-fr gap-3 whitespace-nowrap px-1 sm:px-0">
-              <li>
-                <Link
-                  href="/admin"
-                  className="block w-full px-3 py-2 rounded-md bg-white dark:bg-slate-800 shadow-sm text-sm text-center 
-                            transition-colors duration-400 ease-in-out hover:bg-slate-600 dark:hover:bg-slate-700"
-                  aria-current="page"
-                >
-                  Overview
-                </Link>
-              </li>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-              <li>
-                <Link
-                  href="/admin/projects"
-                  className="block w-full px-3 py-2 rounded-md bg-white dark:bg-slate-800 shadow-sm text-sm text-center
-                            transition-colors duration-400 ease-in-out hover:bg-slate-600 dark:hover:bg-slate-700"
-                >
-                  Manage Projects
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/admin/skills"
-                  className="block w-full px-3 py-2 rounded-md bg-white dark:bg-slate-800 shadow-sm text-sm text-center
-                            transition-colors duration-400 ease-in-out hover:bg-slate-600 dark:hover:bg-slate-700"
-                >
-                  Manage Skills
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/admin/services"
-                  className="block w-full px-3 py-2 rounded-md bg-white dark:bg-slate-800 shadow-sm text-sm text-center
-                            transition-colors duration-400 ease-in-out hover:bg-slate-600 dark:hover:bg-slate-700"
-                >
-                  Manage Services
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/admin/settings"
-                  className="block w-full px-3 py-2 rounded-md bg-white dark:bg-slate-800 shadow-sm text-sm text-center
-                            transition-colors duration-400 ease-in-out hover:bg-slate-600 dark:hover:bg-slate-700"
-                >
-                  Settings
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/admin/contacts"
-                  className="block w-full px-3 py-2 rounded-md bg-white dark:bg-slate-800 shadow-sm text-sm text-center
-                            transition-colors duration-400 ease-in-out hover:bg-slate-600 dark:hover:bg-slate-700"
-                >
-                  Contacts
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/admin/users"
-                  className="block w-full px-3 py-2 rounded-md bg-white dark:bg-slate-800 shadow-sm text-sm text-center
-                            transition-colors duration-400 ease-in-out hover:bg-slate-600 dark:hover:bg-slate-700"
-                >
-                  Users
-                </Link>
-              </li>
-            </ul>
+        {/* ── Nav tabs ── */}
+        <nav className="mb-8 overflow-x-auto no-scrollbar">
+          <div className="flex gap-2 min-w-max">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 whitespace-nowrap hover:bg-blue-600/20 hover:text-blue-400 hover:border-blue-600/40"
+                style={{
+                  backgroundColor: "rgba(37,99,235,0.08)",
+                  borderColor: "rgba(37,99,235,0.2)",
+                  color: "#94a3b8",
+                }}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </nav>
 
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-          <HoverGlowCard>
-            <article className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">Total users</div>
-                  <div className="mt-1 text-xl sm:text-2xl font-semibold">{stats.users}</div>
-                  <div className="text-sm text-slate-500 mt-2">All time</div>
-                </div>
+        {/* ── Stats cards ── */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="p-5 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:border-blue-600/40 hover:bg-blue-600/8"
+              style={{
+                backgroundColor: "rgba(30,41,59,0.5)",
+                borderColor: "rgba(37,99,235,0.15)",
+              }}
+            >
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                style={{ backgroundColor: "rgba(37,99,235,0.15)", color: "#60a5fa" }}
+              >
+                {stat.icon}
               </div>
-            </article>
-          </HoverGlowCard>
-
-          <HoverGlowCard>
-            <article className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">Projects</div>
-                <div className="mt-1 text-xl sm:text-2xl font-semibold">{stats.projects}</div>
-                <div className="text-sm text-slate-500 mt-2">
-                  <Link href="/admin/projects" className="underline">Manage</Link>
-                </div>
-              </div>
-            </article>
-          </HoverGlowCard>
-
-          <HoverGlowCard>
-            <article className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">Skills</div>
-                <div className="mt-1 text-xl sm:text-2xl font-semibold">{stats.skills}</div>
-                <div className="text-sm text-slate-500 mt-2">
-                  <Link href="/admin/skills" className="underline">Manage</Link>
-                </div>
-              </div>
-            </article>
-          </HoverGlowCard>
-
-          <HoverGlowCard>
-            <article className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">Services</div>
-                <div className="mt-1 text-xl sm:text-2xl font-semibold">{stats.services}</div>
-                <div className="text-sm text-slate-500 mt-2">
-                  <Link href="/admin/services" className="underline">Manage</Link>
-                </div>
-              </div>
-            </article>
-          </HoverGlowCard>
-
-          <HoverGlowCard>
-            <article className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">Contacts</div>
-                <div className="mt-1 text-xl sm:text-2xl font-semibold">{stats.contacts}</div>
-                <div className="text-sm text-slate-500 mt-2">
-                  <Link href="/admin/contacts" className="underline">View</Link>
-                </div>
-              </div>
-            </article>
-          </HoverGlowCard>
+              <p className="text-xs font-medium uppercase tracking-widest mb-1" style={{ color: "#dfe8f1" }}>
+                {stat.label}
+              </p>
+              <p className="text-3xl font-bold mb-3" style={{ color: "#f1f5f9" }}>
+                {stat.value}
+              </p>
+              <Link
+                href={stat.href}
+                className="text-xs font-medium transition-colors hover:underline"
+                style={{ color: "#2563eb" }}
+              >
+                {stat.action} →
+              </Link>
+            </div>
+          ))}
         </section>
 
-        <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-            <h3 className="font-medium text-base">Quick actions</h3>
-            <div className="mt-3 flex flex-col gap-2">
-              <Link
-                href="/admin/projects/new"
-                className="inline-flex items-center justify-center px-3 py-2 rounded-md bg-purple-600 text-white text-sm"
-                aria-label="Create project"
-              >
-                Create project
-              </Link>
+        {/* ── Bottom grid: Quick actions + Recent activity ── */}
+        <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
-              <Link
-                href="/admin/skills"
-                className="inline-flex items-center justify-center px-3 py-2 rounded-md border text-sm"
-                aria-label="Add skill"
-              >
-                Add skill
-              </Link>
-
-              <Link
-                href="/admin/services/new"
-                className="inline-flex items-center justify-center px-3 py-2 rounded-md border text-sm"
-                aria-label="Add service"
-              >
-                Add service
-              </Link>
+          {/* Quick actions */}
+          <div
+            className="p-6 rounded-2xl border"
+            style={{
+              backgroundColor: "rgba(30,41,59,0.5)",
+              borderColor: "rgba(37,99,235,0.15)",
+            }}
+          >
+            <h3 className="font-semibold mb-4" style={{ color: "#f1f5f9" }}>Quick Actions</h3>
+            <div className="flex flex-col gap-2">
+              {quickActions.map((action) => (
+                <Link
+                  key={action.href}
+                  href={action.href}
+                  className="flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02] border"
+                  style={
+                    action.primary
+                      ? {
+                          backgroundColor: "#2563eb",
+                          borderColor: "#2563eb",
+                          color: "#fff",
+                          boxShadow: "0 0 16px rgba(37,99,235,0.3)",
+                        }
+                      : {
+                          backgroundColor: "rgba(37,99,235,0.08)",
+                          borderColor: "rgba(37,99,235,0.2)",
+                          color: "#94a3b8",
+                        }
+                  }
+                >
+                  {action.label}
+                </Link>
+              ))}
             </div>
           </div>
 
-          <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm md:col-span-3">
-            <h3 className="font-medium text-base">Recent activity</h3>
-            <div className="mt-3 text-sm text-slate-500">
-              <p>No recent activity to show. Replace with real feed or activity logs.</p>
+          {/* Recent activity */}
+          <div
+            className="md:col-span-3 p-6 rounded-2xl border"
+            style={{
+              backgroundColor: "rgba(30,41,59,0.5)",
+              borderColor: "rgba(37,99,235,0.15)",
+            }}
+          >
+            <h3 className="font-semibold mb-4" style={{ color: "#f1f5f9" }}>Recent Activity</h3>
+            <div
+              className="flex flex-col items-center justify-center py-12 rounded-xl border border-dashed"
+              style={{ borderColor: "rgba(37,99,235,0.15)" }}
+            >
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#334155"
+                strokeWidth="1.5"
+                className="mb-3"
+              >
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+              <p className="text-sm" style={{ color: "#dfe8f1" }}>No recent activity yet.</p>
+              <p className="text-xs mt-1" style={{ color: "#f1dfe8" }}>
+                Activity logs will appear here once you start managing content.
+              </p>
             </div>
           </div>
+
         </section>
       </div>
     </div>

@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 // import Navbar from "../components/Navbar";
 // import Footer from "../components/Footer";
 import ConditionalShell from "../components/ConditionalShell"
+// import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({
   subsets: ["latin"],

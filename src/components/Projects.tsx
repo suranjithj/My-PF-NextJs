@@ -37,25 +37,52 @@ export default function Projects() {
   }, [])
 
   return (
-    <section id="projects" className="py-20 px-4" ref={ref}>
+    <section id="projects" className="py-24 px-4" ref={ref} style={{ backgroundColor: "#001436" }}>
       <div className="max-w-6xl mx-auto">
+
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <div className="flex items-center gap-4">
-            <hr className="flex-1 border-t-2 border-purple-500 dark:border-purple-500" />
-            <h2 className="text-5xl font-bold mb-4 text-white">Featured Projects</h2>
-            <hr className="flex-1 border-t-2 border-pink-500 dark:border-pink-500" />
+          <div className="flex items-center gap-4 mb-4">
+            <hr className="flex-1 border-t-2" style={{ borderColor: "#2563eb" }} />
+            <h2 className="text-5xl font-bold" style={{ color: "#f1f5f9" }}>Featured Projects</h2>
+            <hr className="flex-1 border-t-2" style={{ borderColor: "#2563eb" }} />
+          </div>
+          <div className="flex justify-center">
+            <span
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold tracking-widest uppercase border"
+              style={{
+                backgroundColor: "rgba(37,99,235,0.1)",
+                borderColor: "rgba(37,99,235,0.25)",
+                color: "#60a5fa",
+              }}
+            >
+              Our Work
+            </span>
           </div>
         </motion.div>
 
+        {/* States */}
         {loading ? (
-          <div className="text-center text-gray-400">Loading projects...</div>
+          <div className="flex justify-center py-20">
+            <div
+              className="w-8 h-8 rounded-full border-2 animate-spin"
+              style={{ borderColor: "rgba(37,99,235,0.2)", borderTopColor: "#2563eb" }}
+            />
+          </div>
         ) : projects.length === 0 ? (
-          <div className="text-center text-gray-400">No projects to show. Coming Soon!</div>
+          <div
+            className="text-center py-20 rounded-2xl border"
+            style={{ borderColor: "rgba(37,99,235,0.15)", backgroundColor: "rgba(30,41,59,0.3)", color: "#475569" }}
+          >
+            <div className="text-4xl mb-3">📁</div>
+            <p>No projects to show yet.</p>
+            <p className="text-sm mt-1" style={{ color: "#334155" }}>Coming soon!</p>
+          </div>
         ) : (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -73,41 +100,55 @@ export default function Projects() {
                     description=""
                   >
                     <div className="p-4">
+                      {/* Tech tags */}
                       <div className="flex flex-wrap gap-2 mb-4">
                         {project.technologies?.map((tech, i) => (
                           <span
                             key={i}
-                            className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs"
+                            className="px-3 py-1 rounded-full text-xs border"
+                            style={{
+                              backgroundColor: "rgba(37,99,235,0.15)",
+                              color: "#93c5fd",
+                              borderColor: "rgba(37,99,235,0.25)",
+                            }}
                           >
                             {tech}
                           </span>
                         ))}
                       </div>
 
-                      <p className="text-sm text-justify text-gray-300 mb-3">{project.description}</p>
+                      <p className="text-sm text-justify mb-3" style={{ color: "#94a3b8" }}>
+                        {project.description}
+                      </p>
 
-                      <div className="flex items-center gap-3">
+                      {/* Links */}
+                      <div className="flex items-center gap-4">
                         {project.githubUrl && (
                           <a
                             href={project.githubUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+                            className="inline-flex items-center gap-1.5 text-sm transition-colors"
+                            style={{ color: "#64748b" }}
+                            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#60a5fa")}
+                            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#64748b")}
                           >
-                            <Github size={18} />
-                            <span className="text-xs">Source</span>
+                            <Github size={16} />
+                            <span>Source</span>
                           </a>
                         )}
-
                         {project.liveUrl && (
                           <a
                             href={project.liveUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+                            className="inline-flex items-center gap-1.5 text-sm transition-colors"
+                            style={{ color: "#64748b" }}
+                            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#60a5fa")}
+                            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#64748b")}
                           >
-                            <ExternalLink size={18} />
-                            <span className="text-xs">Live</span>
+                            <ExternalLink size={16} />
+                            <span>Live</span>
                           </a>
                         )}
                       </div>
@@ -117,7 +158,7 @@ export default function Projects() {
               ))}
             </div>
 
-            {/* See All Projects Button */}
+            {/* See All Projects */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -126,10 +167,11 @@ export default function Projects() {
             >
               <Link
                 href="/projects"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-linear-to-r from-purple-600 to-pink-600 text-white font-medium hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-white font-semibold transition-all hover:scale-105"
+                style={{ backgroundColor: "#2563eb", boxShadow: "0 0 24px rgba(37,99,235,0.35)" }}
               >
                 See All Projects
-                <ArrowRight size={20} />
+                <ArrowRight size={18} />
               </Link>
             </motion.div>
           </>

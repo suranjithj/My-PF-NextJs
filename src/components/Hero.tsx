@@ -1,188 +1,205 @@
-// 'use client'
+"use client";
 
-// import { ArrowDown } from 'lucide-react'
-// import { useState } from 'react'
-// import { Social } from './Social'
-// import { motion } from "framer-motion"
-// import Galaxy from './ui/Galaxy'
+import { useEffect, useRef, useState } from "react";
 
-// export default function Hero() {
-//   const [clicked, setClicked] = useState(false)
-
-//   const handleScroll = () => {
-//     setClicked(true)
-//     const aboutSection = document.querySelector("#about")
-//     if (aboutSection) {
-//       aboutSection.scrollIntoView({ behavior: "smooth" })
-//     }
-
-//     setTimeout(() => setClicked(false), 400)
-//   }
-
-//   return (
-//     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
-//       <div className="absolute inset-0 overflow-hidden">
-//         {/* Rotating Galaxy Background */}
-//         <Galaxy />
-//       </div>
-
-//       <div className="relative z-10 max-w-6xl mx-auto text-center animate-fade-in min-h-screen content-center sm:px-6 lg:px-8 md:py-10">
-//         <div className="md:flex-row xl:mx-40 lg:mx-30 md:mx-20 sm:mx-10 xs:mx-10">
-//           <h1 
-//             className="text-6xl md:text-7xl mt-24 font-bold bg-clip-text text-transparent bg-linear-to-r from-purple-400 via-pink-500 to-red-500 animate-slide-up"
-//           >
-//             Hi, I&apos;m SURANJITH JAYAWARDHANA
-//           </h1>
-
-//           <p className="text-gray-300 mb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-//             BSc (Hons) Software Eng | Cardiff Met.
-//           </p>
-
-//           <p className="text-2xl md:text-4xl text-gray-300 mb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-//             Full Stack Web Developer
-//           </p>
-
-//           <p className="text-lg md:text-xl text-gray-400 mb-8 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s' }}>
-//             I develop responsive, functional, and scalable web applications that make a difference.
-//           </p>
-
-//           <div className="flex gap-4 justify-center mb-12 flex-wrap animate-slide-up" style={{ animationDelay: '0.6s' }}>
-//             <a
-//               href="#contact"
-//               className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full font-medium transition-all transform hover:scale-105"
-//             >
-//               Get In Touch
-//             </a>
-//             <a
-//               href="#projects"
-//               className="border-2 border-purple-500 text-purple-400 hover:border-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-full font-medium transition-all"
-//             >
-//               View Work
-//             </a>
-//           </div>
-
-//           <div className='mb-20 animate-slide-up' style={{ animationDelay: '0.8s' }}>
-//             <Social />
-//           </div>
-
-//           <div className="absolute mt-20 bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-//             <motion.button
-//               onClick={handleScroll}
-//               whileHover={{ scale: 1.1 }}
-//               whileTap={{ scale: 0.9 }}
-//               animate={clicked ? { rotate: 360 } : { rotate: 0 }}
-//               transition={{ duration: 0.4, ease: "easeInOut" }}
-//               className="p-3 rounded-full hover:bg-purple-700/60 backdrop-blur-md text-purple-400 shadow-md"
-//             >
-//               <ArrowDown size={32} />
-//             </motion.button>
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   )
-// }
-
-'use client'
-
-import { ArrowDown } from 'lucide-react'
-import { useState } from 'react'
-import { Social } from './Social'
-import { motion } from "framer-motion"
+const phrases = [
+  "Web Applications",
+  "E-Commerce Websites",
+  "Custom Software",
+  "POS Systems",
+  "Dashboards & Analytics",
+];
 
 export default function Hero() {
-  const [clicked, setClicked] = useState(false)
+  const [displayText, setDisplayText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const handleScroll = () => {
-    setClicked(true)
-    const aboutSection = document.querySelector("#about")
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: "smooth" })
+  // Typewriter effect
+  useEffect(() => {
+    const current = phrases[currentIndex];
+    const speed = isDeleting ? 60 : 100;
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setDisplayText(current.slice(0, displayText.length + 1));
+        if (displayText.length + 1 === current.length) {
+          setTimeout(() => setIsDeleting(true), 1800);
+        }
+      } else {
+        setDisplayText(current.slice(0, displayText.length - 1));
+        if (displayText.length - 1 === 0) {
+          setIsDeleting(false);
+          setCurrentIndex((prev) => (prev + 1) % phrases.length);
+        }
+      }
+    }, speed);
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, currentIndex]);
+
+  // Particle network canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let animationId: number;
+    const particles: { x: number; y: number; vx: number; vy: number; radius: number; opacity: number }[] = [];
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 2 + 1,
+        opacity: Math.random() * 0.5 + 0.2,
+      });
     }
 
-    setTimeout(() => setClicked(false), 400)
-  }
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(37,99,235,${0.15 * (1 - dist / 130)})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      particles.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(37,99,235,${p.opacity})`;
+        ctx.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      });
+      animationId = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
-      {/* Video Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute w-full h-full object-cover"
-          style={{ opacity: 0.5 }}
-        >
-          <source src="/videos/background.mp4" type="video/mp4" />
-          <source src="/videos/background.webm" type="video/webm" />
-          Your browser does not support the video tag.
-        </video>
-        
-        {/* linear Overlay for better text readability */}
-        <div className="absolute inset-0 bg-linear-to-b from-gray-900/50 via-purple-900/30 to-gray-900/80" />
-      </div>
+    <section
+      id="hero"
+      className="relative min-h-screen flex items-center overflow-hidden"
+      style={{ backgroundColor: "#001436" }}
+    >
+      <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-10">
+        <source src="/videos/background.mp4" type="video/mp4" />
+      </video>
 
-      <div className="relative z-10 max-w-6xl mx-auto text-center animate-fade-in min-h-screen content-center sm:px-6 lg:px-8 md:py-10">
-        <div className="md:flex-row xl:mx-40 lg:mx-30 md:mx-20 sm:mx-10 xs:mx-10">
-          <h2 
-          className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl mt-24 font-bold bg-clip-text text-gray-200 animate-slide-up"
-          >
-            Hi, I&apos;m 
-          </h2>
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ opacity: 0.7 }} />
 
-          <h1 
-          className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-linear-to-r from-purple-400 via-pink-500 to-red-500 animate-slide-up px-4"
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(37,99,235,0.12) 0%, transparent 65%)" }} />
+      <div className="absolute bottom-0 left-0 right-0 h-32" style={{ background: "linear-gradient(to top, #001436, transparent)" }} />
+
+      <div className="relative z-10 w-full px-6 lg:px-16 py-32">
+        <div className="flex flex-col items-center text-center">
+
+          {/* Badge */}
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-md font-medium mb-10 border"
+            style={{ backgroundColor: "rgba(37,99,235,0.1)", borderColor: "rgba(37,99,235,0.3)", color: "#93c5fd" }}
           >
-            SURANJITH JAYAWARDHANA
+            <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: "#2563eb" }} />
+            Beyond Traditional IT Services
+          </div>
+
+          <h1
+            className="font-bold leading-tight mb-5 w-full"
+            style={{ fontSize: "clamp(3rem, 7vw, 6rem)", color: "#f1f5f9", letterSpacing: "-0.02em" }}
+          >
+            We Are{" "}
+            <span style={{ background: "linear-gradient(135deg, #2563eb, #60a5fa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              DevLynx
+            </span>
           </h1>
 
-          <p className="text-gray-200 mb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            BSc (Hons) Software Eng | Cardiff Met.
+          <h2
+            className="font-semibold mb-8 w-full"
+            style={{ fontSize: "clamp(1.6rem, 4vw, 3.2rem)", color: "#cbd5e1", letterSpacing: "-0.01em", minHeight: "1.4em" }}
+          >
+            We Build{" "}
+            <span style={{ color: "#60a5fa" }}>
+              {displayText}
+              <span className="animate-pulse" style={{ color: "#2563eb" }}>|</span>
+            </span>
+          </h2>
+
+          <p
+            className="mb-12 leading-relaxed max-w-3xl"
+            style={{ fontSize: "clamp(1rem, 1.5vw, 1.15rem)", color: "#f1f5f9" }}
+          >
+            DevLynx is a creative development studio that transforms your ideas into{" "}
+            <span style={{ fontWeight: "600" }}>scalable, high-performance digital products</span>.
+            We combine design, technology, and strategy, so you get a partner, not just a vendor.
           </p>
 
-          <p className="text-2xl md:text-4xl text-gray-200 font-bold mb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            Full Stack Web Developer
-          </p>
+          <div className="flex flex-wrap justify-center gap-12 mb-14">
+            {[
+              { value: "100%", label: "Client Satisfaction" },
+              { value: "Modern", label: "Tech Stack" },
+              { value: "SEO", label: "Friendly" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-2xl font-bold" style={{ color: "#2563eb" }}>{stat.value}</div>
+                <div className="text-md mt-0.5" style={{ color: "#e2e8f0" }}>{stat.label}</div>
+              </div>
+            ))}
+          </div>
 
-          <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s' }}>
-            I develop responsive, functional, and scalable web applications that make a difference.
-          </p>
-
-          <div className="flex gap-4 justify-center mb-12 flex-wrap animate-slide-up" style={{ animationDelay: '0.6s' }}>
+          {/* CTAs */}
+          <div className="flex flex-wrap justify-center gap-4">
             <a
               href="#contact"
-              className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full font-medium transition-all transform hover:scale-105"
+              className="inline-flex items-center gap-2 px-9 py-4 rounded-lg font-semibold text-white transition-all duration-300 hover:scale-105"
+              style={{ backgroundColor: "#2563eb", boxShadow: "0 0 28px rgba(37,99,235,0.45)" }}
             >
-              Get In Touch
+              Start Your Project
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
             </a>
             <a
               href="#projects"
-              className="border-2 border-purple-500 text-purple-400 hover:border-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-full font-medium transition-all"
+              className="inline-flex items-center gap-2 px-9 py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 border"
+              style={{ color: "#e2e8f0", borderColor: "rgba(203,213,225,0.25)", backgroundColor: "rgba(255,255,255,0.04)" }}
             >
-              View Work
+              View Our Work
             </a>
-          </div>
-
-          <div className='mb-20 animate-slide-up' style={{ animationDelay: '0.8s' }}>
-            <Social />
-          </div>
-
-          <div className="absolute mt-20 bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <motion.button
-              onClick={handleScroll}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              animate={clicked ? { rotate: 360 } : { rotate: 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="p-3 rounded-full hover:bg-purple-700/60 backdrop-blur-md text-purple-400 shadow-md"
-            >
-              <ArrowDown size={32} />
-            </motion.button>
           </div>
         </div>
       </div>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+        <span className="text-xs tracking-widest" style={{ color: "#475569" }}>SCROLL</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
+          <path d="M12 5v14M5 12l7 7 7-7" />
+        </svg>
+      </div>
     </section>
-  )
+  );
 }

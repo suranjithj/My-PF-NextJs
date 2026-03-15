@@ -37,12 +37,8 @@ export default function ServicesPage() {
 
   const deleteService = async (id: string) => {
     if (!confirm('Are you sure you want to delete this service?')) return
-
     try {
-      const res = await fetch(`/api/admin/services/${id}`, {
-        method: 'DELETE',
-      })
-
+      const res = await fetch(`/api/admin/services/${id}`, { method: 'DELETE' })
       if (res.ok) {
         setServices(services.filter(s => s.id !== id))
       } else {
@@ -60,15 +56,14 @@ export default function ServicesPage() {
       const res = await fetch(`/api/admin/services/${service.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           title: service.title,
           description: service.description,
           features: service.features,
           order: service.order,
-          active: !service.active 
+          active: !service.active,
         }),
       })
-
       if (res.ok) {
         const updated = await res.json()
         setServices(services.map(s => s.id === updated.id ? updated : s))
@@ -78,105 +73,153 @@ export default function ServicesPage() {
       }
     } catch (error) {
       console.error('Failed to update service:', error)
-      alert('Failed to update service')
     }
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+      <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#001436' }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#2563eb' }} />
       </div>
     )
   }
 
   return (
-    <div className="p-8">
+    <div className="min-h-screen p-8" style={{ backgroundColor: '#001436' }}>
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Manage Services</h1>
+
+        {/* Header */}
+        <div className="flex justify-between items-center mb-3">
+          <div>
+            <h1 className="text-3xl font-bold" style={{ color: '#f1f5f9' }}>Services</h1>
+            <p className="text-sm mt-1" style={{ color: '#475569' }}>
+              {services.length} service{services.length !== 1 ? 's' : ''} total
+            </p>
+          </div>
           <Link
             href="/admin/services/new"
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white transition-all hover:scale-105"
+            style={{ backgroundColor: '#2563eb', boxShadow: '0 0 16px rgba(37,99,235,0.35)' }}
           >
-            <Plus size={20} />
+            <Plus size={18} />
             Add Service
           </Link>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Back link */}
+        <Link
+          href="/admin/dashboard"
+          className="inline-flex items-center gap-2 text-sm mb-8 transition-colors hover:text-blue-400"
+          style={{ color: '#475569' }}
+        >
+          ← Back to Dashboard
+        </Link>
+
+        {/* Empty state */}
+        {services.length === 0 && (
+          <div
+            className="text-center py-20 rounded-2xl border border-dashed"
+            style={{ borderColor: 'rgba(37,99,235,0.2)', color: '#475569' }}
+          >
+            <div className="text-4xl mb-3">🛠</div>
+            <p className="text-lg mb-2">No services yet.</p>
+            <p className="text-sm mb-6" style={{ color: '#334155' }}>Add your first service to display it on the website.</p>
+            <Link
+              href="/admin/services/new"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-white"
+              style={{ backgroundColor: '#2563eb' }}
+            >
+              <Plus size={16} /> Add Service
+            </Link>
+          </div>
+        )}
+
+        {/* Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {services.map((service) => (
             <div
               key={service.id}
-              className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+              className="rounded-2xl border p-6 flex flex-col transition-all duration-200 hover:-translate-y-1"
+              style={{
+                backgroundColor: 'rgba(30,41,59,0.5)',
+                borderColor: 'rgba(37,99,235,0.15)',
+              }}
             >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900 mb-2">{service.title}</h3>
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      service.active
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    {service.active ? 'Active' : 'Inactive'}
-                  </span>
+              {/* Title + status */}
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="font-semibold text-lg leading-tight" style={{ color: '#f1f5f9' }}>
+                  {service.title}
+                </h3>
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full border shrink-0 ml-2"
+                  style={service.active
+                    ? { color: '#86efac', borderColor: 'rgba(34,197,94,0.3)', backgroundColor: 'rgba(34,197,94,0.1)' }
+                    : { color: '#94a3b8', borderColor: 'rgba(148,163,184,0.2)', backgroundColor: 'rgba(148,163,184,0.05)' }
+                  }
+                >
+                  {service.active ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm leading-relaxed mb-4 line-clamp-3" style={{ color: '#64748b' }}>
+                {service.description}
+              </p>
+
+              {/* Features */}
+              {service.features.length > 0 && (
+                <div className="mb-4 flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#475569' }}>
+                    Features
+                  </p>
+                  <ul className="space-y-1">
+                    {service.features.slice(0, 3).map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs" style={{ color: '#64748b' }}>
+                        <span style={{ color: '#2563eb' }}>•</span>
+                        <span className="line-clamp-1">{feature}</span>
+                      </li>
+                    ))}
+                    {service.features.length > 3 && (
+                      <li className="text-xs" style={{ color: '#2563eb' }}>
+                        +{service.features.length - 3} more
+                      </li>
+                    )}
+                  </ul>
                 </div>
-              </div>
+              )}
 
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3">{service.description}</p>
-
-              <div className="mb-4">
-                <p className="text-xs font-semibold text-gray-500 mb-2">Features:</p>
-                <ul className="text-xs text-gray-600 space-y-1">
-                  {service.features.slice(0, 3).map((feature, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <span className="text-purple-600 mr-1">•</span>
-                      <span className="line-clamp-1">{feature}</span>
-                    </li>
-                  ))}
-                  {service.features.length > 3 && (
-                    <li className="text-purple-600 text-xs">+{service.features.length - 3} more</li>
-                  )}
-                </ul>
-              </div>
-
-              <div className="flex gap-2">
+              {/* Actions */}
+              <div className="flex gap-2 mt-auto pt-4 border-t" style={{ borderColor: 'rgba(37,99,235,0.1)' }}>
                 <button
                   onClick={() => toggleActive(service)}
-                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    service.active
-                      ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                      : 'bg-green-100 hover:bg-green-200 text-green-700'
-                  }`}
+                  className="flex-1 px-3 py-2 rounded-lg text-xs font-medium border transition-all"
+                  style={service.active
+                    ? { color: '#94a3b8', borderColor: 'rgba(148,163,184,0.2)', backgroundColor: 'rgba(148,163,184,0.05)' }
+                    : { color: '#86efac', borderColor: 'rgba(34,197,94,0.3)', backgroundColor: 'rgba(34,197,94,0.08)' }
+                  }
                 >
                   {service.active ? 'Deactivate' : 'Activate'}
                 </button>
                 <Link
                   href={`/admin/services/${service.id}`}
-                  className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors"
+                  className="p-2 rounded-lg border transition-all"
+                  style={{ color: '#60a5fa', borderColor: 'rgba(37,99,235,0.2)', backgroundColor: 'rgba(37,99,235,0.08)' }}
                   title="Edit"
                 >
-                  <Edit size={18} />
+                  <Edit size={16} />
                 </Link>
                 <button
                   onClick={() => deleteService(service.id)}
-                  className="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors"
+                  className="p-2 rounded-lg border transition-all"
+                  style={{ color: '#fca5a5', borderColor: 'rgba(239,68,68,0.2)', backgroundColor: 'rgba(239,68,68,0.08)' }}
                   title="Delete"
                 >
-                  <Trash2 size={18} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>
           ))}
         </div>
-
-        {services.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No services yet. Create your first one!</p>
-          </div>
-        )}
       </div>
     </div>
   )

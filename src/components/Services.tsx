@@ -42,30 +42,65 @@ export default function Services() {
   }, [])
 
   return (
-    <section id="services" className="py-20 px-4" ref={ref}>
+    <section
+      id="services"
+      className="py-24 px-4"
+      ref={ref}
+      style={{ backgroundColor: '#020e24' }}
+    >
       <div className="max-w-6xl mx-auto">
+
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <div className="flex items-center gap-4">
-              <hr className="flex-1 border-t-2 border-purple-500 dark:border-purple-500" />
-              <h2 className="text-5xl font-bold mb-4 text-white">Services</h2>
-              <hr className="flex-1 border-t-2 border-pink-500 dark:border-pink-500" />
+          <div className="flex items-center gap-4 mb-4">
+            <hr className="flex-1 border-t-2" style={{ borderColor: '#2563eb' }} />
+            <h2 className="text-5xl font-bold" style={{ color: '#f1f5f9' }}>Services</h2>
+            <hr className="flex-1 border-t-2" style={{ borderColor: '#2563eb' }} />
           </div>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+
+          {/* Section badge */}
+          <div className="flex justify-center mb-4">
+            <span
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold tracking-widest uppercase border"
+              style={{
+                backgroundColor: 'rgba(37,99,235,0.1)',
+                borderColor: 'rgba(37,99,235,0.25)',
+                color: '#60a5fa',
+              }}
+            >
+              What We Offer
+            </span>
+          </div>
+
+          <p className="text-xl max-w-3xl mx-auto" style={{ color: '#94a3b8' }}>
             Comprehensive solutions tailored to bring your ideas to life
           </p>
         </motion.div>
 
+        {/* States */}
         {loading ? (
-          <div className="text-center text-gray-400">Loading services...</div>
+          <div className="flex justify-center py-20">
+            <div
+              className="w-8 h-8 rounded-full border-2 animate-spin"
+              style={{ borderColor: 'rgba(37,99,235,0.2)', borderTopColor: '#2563eb' }}
+            />
+          </div>
         ) : services.length === 0 ? (
-          <div className="text-center text-gray-400">No services added yet. Add some from the dashboard!</div>
+          <div
+            className="text-center py-20 rounded-2xl border"
+            style={{ borderColor: 'rgba(37,99,235,0.15)', backgroundColor: 'rgba(30,41,59,0.3)', color: '#475569' }}
+          >
+            <div className="text-4xl mb-3">🛠</div>
+            <p>No services added yet.</p>
+            <p className="text-sm mt-1" style={{ color: '#334155' }}>Add them from the admin dashboard.</p>
+          </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, index) => {
               const IconComponent = iconMap[service.icon] || Code
 
@@ -75,19 +110,55 @@ export default function Services() {
                   initial={{ opacity: 0, y: 50 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl border border-white/20 hover:border-purple-500 transition-all duration-300 hover:transform hover:scale-105"
+                  className="p-8 rounded-2xl border transition-all duration-300 hover:scale-105 hover:-translate-y-1"
+                  style={{
+                    backgroundColor: 'rgba(30,41,59,0.5)',
+                    borderColor: 'rgba(37,99,235,0.15)',
+                    backdropFilter: 'blur(8px)',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(37,99,235,0.5)'
+                    ;(e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(37,99,235,0.08)'
+                    ;(e.currentTarget as HTMLDivElement).style.boxShadow = '0 0 30px rgba(37,99,235,0.12)'
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(37,99,235,0.15)'
+                    ;(e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(30,41,59,0.5)'
+                    ;(e.currentTarget as HTMLDivElement).style.boxShadow = 'none'
+                  }}
                 >
-                  <div className="w-16 h-16 bg-linear-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
-                    <IconComponent className="text-white" size={32} />
+                  {/* Icon */}
+                  <div
+                    className="w-16 h-16 rounded-xl flex items-center justify-center mb-6"
+                    style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)' }}
+                  >
+                    <IconComponent className="text-white" size={30} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">{service.title}</h3>
-                  <p className="text-gray-300 mb-6">{service.description}</p>
+
+                  {/* Title */}
+                  <h3 className="text-2xl font-bold mb-3" style={{ color: '#f1f5f9' }}>
+                    {service.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="mb-6 leading-relaxed" style={{ color: '#94a3b8' }}>
+                    {service.description}
+                  </p>
+
+                  {/* Features */}
                   {service.features.length > 0 && (
                     <ul className="space-y-2">
                       {service.features.map((feature, i) => (
-                        <li key={i} className="flex items-start text-gray-400">
-                          <span className="text-purple-400 mr-2">✓</span>
-                          <span>{feature}</span>
+                        <li key={i} className="flex items-start gap-2">
+                          <span
+                            className="mt-1 shrink-0 w-4 h-4 rounded-full flex items-center justify-center"
+                            style={{ backgroundColor: 'rgba(37,99,235,0.2)' }}
+                          >
+                            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="3">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          </span>
+                          <span className="text-sm" style={{ color: '#64748b' }}>{feature}</span>
                         </li>
                       ))}
                     </ul>

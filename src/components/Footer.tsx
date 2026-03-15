@@ -138,11 +138,11 @@ export default function Footer() {
             <a
               key={item.label}
               href={item.href}
-              className="flex items-center gap-3 group"
+              className="flex items-center justify-center gap-3 group"
             >
               <span className="text-xl">{item.icon}</span>
               <div>
-                <p className="text-xs" style={{ color: "#475569" }}>{item.label}</p>
+                <p className="text-sm" style={{ color: "#475569" }}>{item.label}</p>
                 <p className="text-sm transition-colors group-hover:text-blue-400" style={{ color: "#94a3b8" }}>
                   {item.value}
                 </p>

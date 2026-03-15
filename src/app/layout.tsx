@@ -35,14 +35,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // <html lang="en">
-    //   <body className={`${inter.variable} ${poppins.variable} antialiased`}>
-    //     {/* <Navbar />
-    //     {children}
-    //     <Footer /> */}
-    //     <ConditionalShell>{children}</ConditionalShell>
-    //   </body>
-    // </html>
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body 
         className={`${inter.variable} ${poppins.variable} ${montSerrat.variable} antialiased`}

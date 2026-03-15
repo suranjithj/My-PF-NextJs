@@ -16,12 +16,12 @@ export function Social() {
     },
     {
       name: "LinkedIn",
-      href: "https://www.linkedin.com/in/suranjithj/",
+      href: "https://www.linkedin.com/company/devlynxitsolutions/",
       icon: Icons.linkedIn,
     },
     {
       name: "Facebook",
-      href: "https://www.facebook.com/share/1Bm1mcPMCF/",
+      href: "https://www.facebook.com/DevLynxIT/",
       icon: Icons.facebook,
     },
     {
@@ -40,7 +40,7 @@ export function Social() {
               href={social.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-full h-full text-gray-400 hover:text-purple-400 transition-colors"
+              className="flex items-center justify-center w-full h-full text-gray-400 hover:text-blue-400 transition-colors"
               aria-label={social.name}
             >
               <social.icon className="w-6 h-6" />

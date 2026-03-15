@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
-// import Navbar from "../components/Navbar";
-// import Footer from "../components/Footer";
 import ConditionalShell from "../components/ConditionalShell"
-// import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,6 +39,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ConditionalShell>{children}</ConditionalShell>
+        <SpeedInsights />
       </body>
     </html>
   );

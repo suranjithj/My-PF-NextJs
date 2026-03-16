@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
+import Script from "next/script"
 import localFont from "next/font/local";
 import ConditionalShell from "../components/ConditionalShell"
 import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -40,6 +41,21 @@ export default function RootLayout({
       >
         <ConditionalShell>{children}</ConditionalShell>
         <SpeedInsights />
+
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-YRVGS9SP80"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-YRVGS9SP80');
+          `}
+        </Script>
+
       </body>
     </html>
   );
